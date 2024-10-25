@@ -5,6 +5,8 @@
 #include <random>
 #include <vector> /* Does provide std::vector */
 
+#include <chrono> // Zeitmessung
+
 #include "CLI/CLI.hpp"
 #include "config.h"
 
@@ -16,6 +18,7 @@ auto main(int argc, char** argv) -> int
      */
     auto counter{20};           /* set a default of 20 */
     CLI::App app{PROJECT_NAME}; /* create an instance of an App with the variable name app*/
+
     try
     {
         app.set_version_flag("-V,--version", fmt::format("{} {}", PROJECT_VER, PROJECT_BUILD_DATE));
@@ -27,6 +30,32 @@ auto main(int argc, char** argv) -> int
     {
         return app.exit(e);
     }
+
+    fmt::print("Hello, {}!\n", app.get_name());
+    fmt::print("Value of argc: {}\n", argc);
+    fmt::print("Value of argv[0]: {}\n", argv[0]);
+    fmt::print("Value of argv[3]: {}\n", argv[3]);
+    fmt::print("The value of counter: {}\n", counter);
+
+
+    // Zufallszahlen einordnen von 1 bis 100 -----------------------------------------------------------
+    std::vector<int> random_vector(counter); // Erstelle Vektor Größe 'counter', füllen 1 bis 100
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(1, 100);
+
+    for (auto& elem : random_vector) {
+        elem = distrib(gen);
+    }
+
+    // Unsortierten Vektor ausgeben
+    fmt::print("Unsorted vector: ");
+    for (const auto& elem : random_vector) {
+        fmt::print("{} ", elem);
+    }
+    fmt::print("\n");
+
+
 
     
     // Seed with a real random value, if available
@@ -61,7 +90,7 @@ auto main(int argc, char** argv) -> int
     fmt::println("--------------------------------------------------------------------------");
 
 
-    //fmt::println("The sorted vector: [ {} ]", fmt::join(numbers, ", "));
+    fmt::println("The sorted vector: [ {} ]", fmt::join(numbers, ", "));
     elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     fmt::println("The sorting took: {}", elapsed);
     return 0; /* exit gracefully*/
